@@ -108,19 +108,21 @@ var Hero = cc.Class({
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
+    ctor: function () {
+        this.skillList = [Skill.skill1, Skill.skill2];
+    },
 
     start() {},
 
     // 以柔克刚
     skill() {
         var rand = Math.random();
-        var s;
         var loop = 0;
-        for (sl in this.skillList) {
-            loop += sl.rate;
+        cc.log(this.skillList);
+        for (var i in this.skillList) {
+            loop += this.skillList[i].rate;
             if (loop >= rand) {
-                return s;
+                return this.skillList[i];
             }
         }
         return null;
@@ -128,12 +130,6 @@ var Hero = cc.Class({
 
     attack() {
         var s = this.skill();
-
         return s || Skill.normal;
-        // const crit = Math.random() <= this.critRate * 1000;
-        // const damage = crit ? this.power * this.critDam : this.power;
-        // return damage;
     },
-
-    // update (dt) {},
 });

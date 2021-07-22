@@ -24,9 +24,9 @@ cc.Class({
         this.hero.hp = 1000;
         this.hero.speed = 100;
         this.hero.power = 100;
-        this.hero.defense = 100;
-        this.hero.critDam = 100;
-        this.hero.critRate = 100;
+        this.hero.defense = 35;
+        this.hero.critDam = 0.5;
+        this.hero.critRate = 0.25;
         this.hero.defCrit = 100;
 
         this.enemy = new Enmey();
@@ -34,9 +34,9 @@ cc.Class({
         this.enemy.hp = 1000;
         this.enemy.speed = 50;
         this.enemy.power = 100;
-        this.enemy.defense = 100;
-        this.enemy.critDam = 100;
-        this.enemy.critRate = 100;
+        this.enemy.defense = 35;
+        this.enemy.critDam = 0.5;
+        this.enemy.critRate = 0.25;
         this.enemy.defCrit = 100;
         console.log(this.hero.maxHp);
 
@@ -61,7 +61,7 @@ cc.Class({
         name.string = this.enemy.name;
         // 初始化
         this.logTable = this.logArea.getComponent(cc.RichText);
-        this.logTable.string = '恭喜<color=#00ff00> 王尼玛 </c>获取<color=#0fffff> 1 </color>万金币\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n恭喜<color=#00ff00> 王尼玛 </c>获取<color=#0fffff> 1 </color>万金币';
+        this.logTable.string = "【战斗开始】";
         console.log(this.logTable);
         console.log(this.logArea);
     },
@@ -79,15 +79,25 @@ cc.Class({
         this.enemySp.progress = Math.min((dt * this.enemy.speed) / this.maxSpeed + this.enemySp.progress, 1);
         if (this.heroSp.progress >= 1) {
             // 攻击
-            var s = this.hero.attack();
+            let s = this.hero.attack();
             // 造成的伤害
             let info = this.hurt(s, this.hero, this.enemy);
-            // 死亡判断
+            this.showLog(info);
             this.updateHp();
-            cc.log(info);
+            // 死亡判断
+            if (this.enemy.hp <= 0) {
+                this.enemy.active = false;
+            }
             this.heroSp.progress = 0;
         }
         if (this.enemySp.progress >= 1) {
+            let s = this.enemy.attack();
+            let info = this.hurt(s, this.enemy, this.hero);
+            this.showLog(info);
+            this.updateHp();
+            if (this.hero.hp <= 0) {
+                this.hero.active = false;
+            }
             this.enemySp.progress = 0;
         }
     },
@@ -106,6 +116,9 @@ cc.Class({
         }
         let damage = baseDamage - victim.defense;
         victim.hp -= damage;
-        return `<color=green>${attacker.name}</color>对<color=green>${victim.name}</color>使用了${skill.name}照成了${damage}点${crit}伤害`;
+        return `<color=green>${attacker.name}</color>对<color=green>${victim.name}</color>使用了${skill.name}照成了${damage}点${crit}伤害\n`;
+    },
+    showLog: function (text) {
+        this.logTable.string += text;
     },
 });

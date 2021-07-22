@@ -4,6 +4,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
+let Skill = require("Skill");
 
 var Enemy = cc.Class({
     name: "Enemy",
@@ -97,25 +98,33 @@ var Enemy = cc.Class({
                 this._defCrit = value;
             },
         },
+        skillList: [],
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
+    ctor: function () {
+        this.skillList = [Skill.skill3, Skill.skill4];
+    },
+
     skill() {
-        return 1;
+        var rand = Math.random();
+        var loop = 0;
+        for (var i in this.skillList) {
+            loop += this.skillList[i].rate;
+            if (loop >= rand) {
+                return this.skillList[i];
+            }
+        }
+        return null;
     },
 
     start() {},
 
     attack() {
-        if (Math.random() <= 0.25) {
-            return this.skill();
-        }
-
-        const crit = Math.random() <= this.critRate * 1000;
-        const damage = crit ? this.power * this.critDam : this.power;
-        return damage;
+        var s = this.skill();
+        return s || Skill.normal;
     },
+
     hurt(damage) {},
 });
